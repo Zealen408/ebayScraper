@@ -45,7 +45,7 @@ def prepData(item):
 
 def main():
     itemData = []
-    searchTerm = f'{input("Search Term: ") or "knife"}'
+    searchTerm = f'{str(input("Search Term: ")).replace(" ", "+") or "knife"}'
     searchParam = f'{int(input("Enter 2 for Buy Now search") or 1)}'
 
     for loop in range(2):
