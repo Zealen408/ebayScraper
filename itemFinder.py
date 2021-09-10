@@ -1,5 +1,4 @@
 import requests
-import time
 from csv import writer
 from bs4 import BeautifulSoup
 
@@ -28,14 +27,11 @@ def prepData(item):
         if dollarsToFloat <= 10.00:
             title = item.find('h3', class_ = "s-item__title").get_text()
             link = item.find('a', class_ = "s-item__link")['href']
-            # shipping = item.find('span', class_="s-item__shipping")
-            # costShipping = float(shipping.strip('+$ shipping'))
-            # costWithShipping = dollarsToFloat + costShipping
+
             
             row_content = [
                 title,
                 dollars,
-                # costWithShipping,
                 link
             ]
         return row_content
@@ -45,8 +41,8 @@ def prepData(item):
 
 def main():
     itemData = []
-    searchTerm = f'{str(input("Search Term: ")).replace(" ", "+") or "knife"}'
-    searchParam = f'{int(input("Enter 2 for Buy Now search") or 1)}'
+    searchTerm = f'{str(input("Search Term: ")).replace(" ", "+") or "arduino"}'
+    searchParam = f'{int(input("Enter 2 for -Buy Now- search: ") or 1)}'
 
     for loop in range(2):
 
@@ -85,6 +81,7 @@ def saveData(row_content):
         csv_writer = writer(writeObj)
         for row in row_content:
             csv_writer.writerow(row)
+        writeObj.close()
 
 
 
