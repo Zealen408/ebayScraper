@@ -42,10 +42,11 @@ class EbayScrap:
             return contentData
 
     def saveData(self, records: list):
-        with open("myData.csv",'a', newline='\n') as writeObj:
-            csv_writer = writer(writeObj)
+        with open("myData.csv",'a', newline='\n') as f:
+            f.truncate()
+            csv_writer = writer(f)
             for record in records:
-                row = [record.title, record.price, record.link]
+                row = [record.title, record.price, record.link, record.shipping, record.bid_count]
                 csv_writer.writerow(row)
         
 
@@ -54,9 +55,33 @@ class EbayScrap:
         with open(file, 'r+', newline='\n') as f:
             items = list(reader(f))
             for item in items:
-                _ = ItemData(title=item[0], price=item[1], link=item[2])
+                _ = ItemData(title=item[0], price=item[1], link=item[2], shipping=item[3], bid_count=item[4])
                 data.append(_)
         return data
 
     def digDeeper(self, items: list):
-        pass
+        for item in items:
+            if item.shipping == 0.00 or item.bid_count == 0:
+                url = item.link
+                itemPage = requests.get(url)
+                if itemPage.status_code == 200:
+                    soup = BeautifulSoup(itemPage.content)
+                    
+                    try:
+                        item.bid_count = int(soup.find('span', {'id': 'qty-test'}).get_text())
+                    except Exception:
+                        print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
+                        print(f'Bid Count: {Exception}')
+
+                    try:
+                        item.shipping = float(str(soup.find('span', {'id': 'fshippingCost'}).get_text()).strip('$'))
+                    except Exception:
+                        print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
+                        print(f'Shipping: {Exception}')
+                    
+                    for ind, x in enumerate(items):
+                        if x.link == item.link:
+                            items[ind] = item
+                            break
+        return items
+
