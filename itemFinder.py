@@ -20,7 +20,7 @@ class EbayScrap:
         self.url = f'https://www.ebay.com/sch/i.html?_from=R40&_nkw={self.searchTerm}&_sacat=0&rt=nc&LH_BIN=1&_ipg=100&_pgn=' 
 
     def getPage(self, pageNum:int):
-        return requests.get(self.url + str(pageNum))
+        return requests.get(self.url + str(pageNum), timeout=60)
 
     def getData(self, page):
         if page.status_code == 200:
@@ -63,7 +63,7 @@ class EbayScrap:
         for item in items:
             if item.shipping == 0.00 or item.bid_count == 0:
                 url = item.link
-                itemPage = requests.get(url)
+                itemPage = requests.get(url, timeout=60)
                 if itemPage.status_code == 200:
                     soup = BeautifulSoup(itemPage.content)
                     
