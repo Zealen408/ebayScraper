@@ -2,6 +2,7 @@ import requests
 from csv import writer, reader
 from bs4 import BeautifulSoup
 from itemClass import ItemData
+import math
 
 
 class EbayScrap:
@@ -63,7 +64,7 @@ class EbayScrap:
 
     def digDeeper(self, items: list):
         for item in items:
-            if item.shipping == 0.00 or item.bid_count == 0:
+            if math.isclose(item.shipping, 0.00, rel_tol=1e-09, abs_tol=0.0) or item.bid_count == 0:
                 url = item.link
                 itemPage = requests.get(url, timeout=60)
 
