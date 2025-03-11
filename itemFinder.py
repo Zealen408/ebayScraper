@@ -1,7 +1,7 @@
-import requests
 from csv import writer, reader
 from bs4 import BeautifulSoup
 from itemClass import ItemData
+from security import safe_requests
 
 
 class EbayScrap:
@@ -22,7 +22,7 @@ class EbayScrap:
 
     def getPage(self, pageNum:int):
 
-        return requests.get(self.url + str(pageNum), timeout=60)
+        return safe_requests.get(self.url + str(pageNum), timeout=60)
 
     def getData(self, page):
         if page.status_code == 200:
@@ -65,7 +65,7 @@ class EbayScrap:
         for item in items:
             if item.shipping == 0.00 or item.bid_count == 0:
                 url = item.link
-                itemPage = requests.get(url, timeout=60)
+                itemPage = safe_requests.get(url, timeout=60)
 
                 if itemPage.status_code == 200:
                     soup = BeautifulSoup(itemPage.content)
